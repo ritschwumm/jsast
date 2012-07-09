@@ -1,0 +1,12 @@
+JavaScript AST, incomplete.
+
+To build this code, get and install SBT from 
+	https://github.com/harrah/xsbt
+
+Get and install these library/libraries before building:
+	https://github.com/ritschwumm/scutil
+
+Use these commands to build:
+	git clone git@github.com:ritschwumm/jsast.git
+	cd scbson
+	sbt publish-local
