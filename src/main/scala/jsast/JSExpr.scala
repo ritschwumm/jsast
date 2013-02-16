@@ -1,23 +1,10 @@
 package jsast
 
+// groups
+
 sealed trait JSExpr
 
-// case class JSUnparsed(code:String)	extends JSExpr
-
-// literal values
-
-case object JSUndefined	extends JSExpr
-case object JSNaN		extends JSExpr
-case object JSNull 		extends JSExpr
-
-case class JSBoolean(value:Boolean) 					extends JSExpr
-case class JSNumber(value:Number) 						extends JSExpr
-case class JSString(value:String)						extends JSExpr
-case class JSRegexp(pattern:String, options:String)		extends JSExpr
-case class JSArray(items:Seq[JSExpr]) 					extends JSExpr
-case class JSObject(items:Seq[(String,JSExpr)])			extends JSExpr
-
-// operators
+sealed trait JSLiteral		extends JSExpr
 
 sealed trait JSOperator		extends JSExpr
 
@@ -25,6 +12,22 @@ sealed trait JSPrefix		extends JSOperator
 sealed trait JSSuffix		extends JSOperator
 sealed trait JSInfix		extends JSOperator
 sealed trait JSCircumfix	extends JSOperator
+
+sealed trait JSAccess 		extends JSExpr
+
+// literal values
+
+case object JSUndefined	extends JSLiteral
+case object JSNaN		extends JSLiteral
+case object JSNull 		extends JSLiteral
+case object JSThis 		extends JSLiteral
+
+case class JSBoolean(value:Boolean) 				extends JSLiteral
+case class JSNumber(value:Number) 					extends JSLiteral
+case class JSString(value:String)					extends JSLiteral
+case class JSRegexp(pattern:String, options:String)	extends JSLiteral
+case class JSArray(items:Seq[JSExpr]) 				extends JSLiteral
+case class JSObject(items:Seq[(String,JSExpr)])		extends JSLiteral
 
 // arithmetic binary
 
@@ -36,8 +39,8 @@ case class JSMod(left:JSExpr, right:JSExpr)	extends JSInfix
 
 // arithmetic unary
 
-case class JSNeg(sub:JSExpr)				extends JSPrefix
-case class JSPos(sub:JSExpr)				extends JSPrefix
+case class JSNeg(sub:JSExpr)	extends JSPrefix
+case class JSPos(sub:JSExpr)	extends JSPrefix
 
 // comparison
 
@@ -52,9 +55,9 @@ case class JSLe(left:JSExpr, right:JSExpr)		extends JSInfix
 
 // logical
 
-case class JSNot(sub:JSExpr)					extends JSPrefix
-case class JSAnd(left:JSExpr, right:JSExpr)		extends JSInfix
-case class JSOr(left:JSExpr, right:JSExpr)		extends JSInfix
+case class JSNot(sub:JSExpr)				extends JSPrefix
+case class JSAnd(left:JSExpr, right:JSExpr)	extends JSInfix
+case class JSOr(left:JSExpr, right:JSExpr)	extends JSInfix
 
 // bitwise
 
@@ -66,21 +69,40 @@ case class JSBitLeft(left:JSExpr, right:JSExpr)			extends JSInfix
 case class JSBitRight(left:JSExpr, right:JSExpr)		extends JSInfix
 case class JSBitRightFill(left:JSExpr, right:JSExpr)	extends JSInfix
 
+// access
+
+case class JSField(name:String)					extends JSAccess
+case class JSDot(lvalue:JSExpr, field:JSField)	extends JSAccess
+case class JSBracket(lvalue:JSExpr, key:JSExpr)	extends JSAccess
+
+// function call
+		
+case class JSNew(call:JSCall)								extends JSExpr
+case class JSCall(function:JSAccess, arguments:Seq[JSExpr])	extends JSExpr
+
 // special
 
-case class JSIn(left:JSExpr, right:JSExpr)				extends JSInfix
-
-case class JSTernary(condition:JSExpr, trueCase:JSExpr, falseCase:JSExpr)	extends JSOperator
-
 case class JSParens(sub:JSExpr)					extends JSCircumfix
-
 case class JSComma(left:JSExpr, right:JSExpr)	extends JSInfix
 
-case class JSDeref(lvalue:JSExpr, name:String)	extends JSExpr
-case class JSAccess(lvalue:JSExpr, key:JSExpr)	extends JSExpr
+case class JSIn(field:JSField, value:JSExpr)					extends JSInfix
+case class JSTernary(condition:JSExpr, yes:JSExpr, no:JSExpr)	extends JSOperator
 
-case class JSNew(call:JSCall)								extends JSExpr
-case class JSCall(function:String, arguments:Seq[JSExpr])	extends JSExpr
+//------------------------------------------------------------------------------
+
+// varargs builder
+
+object JSVarArray {
+	def apply(it:JSExpr*):JSArray					= JSArray(it)
+	def unapplySeq(it:JSArray):Option[Seq[JSExpr]]	= Some(it.items)
+}
+
+object JSVarObject {
+	def apply(it:(String,JSExpr)*):JSObject						= JSObject(it)
+	def unapplySeq(it:JSObject):Option[Seq[(String,JSExpr)]]	= Some(it.items)
+}
+
+//------------------------------------------------------------------------------
 
 /*
 // pre/post increment/decrement
@@ -94,7 +116,7 @@ case class JSPostDecr(variable:String)	extends JSSuffix
 
 // setter
 
-sealed trait JSSet		extends JSOperator
+sealed trait JSSet	extends JSOperator
 
 case class JSAssign(variable:String, value:JSExpr)		extends JSSet
 case class JSAddAssign(variable:String, value:JSExpr)	extends JSSet
@@ -103,15 +125,3 @@ case class JSMulAssign(variable:String, value:JSExpr)	extends JSSet
 case class JSDivAssign(variable:String, value:JSExpr)	extends JSSet
 case class JSModAssign(variable:String, value:JSExpr)	extends JSSet
 */
-
-//------------------------------------------------------------------------------
-
-object JSVarArray {
-	def apply(it:JSExpr*):JSArray					= JSArray(it)
-	def unapplySeq(it:JSArray):Option[Seq[JSExpr]]	= Some(it.items)
-}
-
-object JSVarObject {
-	def apply(it:(String,JSExpr)*):JSObject						= JSObject(it)
-	def unapplySeq(it:JSObject):Option[Seq[(String,JSExpr)]]	= Some(it.items)
-}
