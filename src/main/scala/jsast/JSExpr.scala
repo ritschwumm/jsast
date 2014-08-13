@@ -1,5 +1,7 @@
 package jsast
 
+import scala.collection.immutable.{ Seq => ISeq }
+
 // groups
 
 sealed trait JSExpr
@@ -26,8 +28,8 @@ case class JSBoolean(value:Boolean) 				extends JSLiteral
 case class JSNumber(value:Number) 					extends JSLiteral
 case class JSString(value:String)					extends JSLiteral
 case class JSRegexp(pattern:String, options:String)	extends JSLiteral
-case class JSArray(items:Seq[JSExpr]) 				extends JSLiteral
-case class JSObject(items:Seq[(String,JSExpr)])		extends JSLiteral
+case class JSArray(items:ISeq[JSExpr]) 				extends JSLiteral
+case class JSObject(items:ISeq[(String,JSExpr)])		extends JSLiteral
 
 // arithmetic binary
 
@@ -77,8 +79,8 @@ case class JSBracket(lvalue:JSExpr, key:JSExpr)	extends JSAccess
 
 // function call
 		
-case class JSNew(call:JSCall)								extends JSExpr
-case class JSCall(function:JSAccess, arguments:Seq[JSExpr])	extends JSExpr
+case class JSNew(call:JSCall)									extends JSExpr
+case class JSCall(function:JSAccess, arguments:ISeq[JSExpr])	extends JSExpr
 
 // special
 
@@ -93,13 +95,13 @@ case class JSTernary(condition:JSExpr, yes:JSExpr, no:JSExpr)	extends JSOperator
 // varargs builder
 
 object JSVarArray {
-	def apply(it:JSExpr*):JSArray					= JSArray(it)
-	def unapplySeq(it:JSArray):Option[Seq[JSExpr]]	= Some(it.items)
+	def apply(it:JSExpr*):JSArray					= JSArray(it.toVector)
+	def unapplySeq(it:JSArray):Option[ISeq[JSExpr]]	= Some(it.items)
 }
 
 object JSVarObject {
-	def apply(it:(String,JSExpr)*):JSObject						= JSObject(it)
-	def unapplySeq(it:JSObject):Option[Seq[(String,JSExpr)]]	= Some(it.items)
+	def apply(it:(String,JSExpr)*):JSObject						= JSObject(it.toVector)
+	def unapplySeq(it:JSObject):Option[ISeq[(String,JSExpr)]]	= Some(it.items)
 }
 
 //------------------------------------------------------------------------------
