@@ -25,11 +25,11 @@ case object JSNull 		extends JSLiteral
 case object JSThis 		extends JSLiteral
 
 case class JSBoolean(value:Boolean) 				extends JSLiteral
-case class JSNumber(value:Number) 					extends JSLiteral
+case class JSNumber(value:Double) 					extends JSLiteral
 case class JSString(value:String)					extends JSLiteral
 case class JSRegexp(pattern:String, options:String)	extends JSLiteral
 case class JSArray(items:ISeq[JSExpr]) 				extends JSLiteral
-case class JSObject(items:ISeq[(String,JSExpr)])		extends JSLiteral
+case class JSObject(items:ISeq[(String,JSExpr)])	extends JSLiteral
 
 // arithmetic binary
 
