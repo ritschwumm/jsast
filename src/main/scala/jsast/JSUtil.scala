@@ -6,11 +6,11 @@ object JSUtil {
 		
 	def quoteRegexpChar(char:Char):String	=
 			char match {
-				case	'(' | ')' | 
-						'{' | '}' | 
-						'[' | ']' | 
+				case	'(' | ')' |
+						'{' | '}' |
+						'[' | ']' |
 						'|' | '+' |
-						'*' | '?' | 
+						'*' | '?' |
 						'\\' | '/'	=> "\\" + char.toString
 				case '\r'			=> "\\r"
 				case '\n'			=> "\\n"
@@ -21,7 +21,13 @@ object JSUtil {
 				case x				=> x.toString
 			}
 	
-	def escapeStringChar(char:Char, doubleQuote:Boolean=true, singleQuote:Boolean=true):String	=
+	def stringLiteralDQ(s:String):String	=
+			s map { JSUtil stringChar (_, true, false) } mkString ("\"", "", "\"")
+			
+	def stringLiteralSQ(s:String):String	=
+			s map { JSUtil stringChar (_, false, true) } mkString ("'", "", "'")
+			
+	def stringChar(char:Char, doubleQuote:Boolean=true, singleQuote:Boolean=true):String	=
 			char match {
 				case '"'	if doubleQuote	=> "\\\""
 				case '\''	if singleQuote	=> "\\\""

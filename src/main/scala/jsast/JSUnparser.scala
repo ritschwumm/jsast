@@ -1,7 +1,7 @@
 package jsast
 
 object JSUnparser {
-	def unparse(expr:JSExpr):String	=
+	def unparseExpr(expr:JSExpr):String	=
 			expr match {
 				// literal values
 				
@@ -9,71 +9,76 @@ object JSUnparser {
 				case JSNaN							=> "NaN"
 				case JSNull							=> "null"
 				case JSThis							=> "this"
+				case JSSuper						=> "super"
 				
-				case JSString(value)				=> value map { JSUtil escapeStringChar (_, true, false) } mkString ("\"", "", "\"")
+				case JSString(value)				=> JSUtil stringLiteralDQ value
 				case JSRegexp(pattern, options)		=> "/" + pattern + "/" + options
 				case JSBoolean(value)				=> if (value) "true" else "false"
 				case JSNumber(value)				=> value.toString
-				case JSArray(items)					=> items map unparse mkString ("[", ", ", "]")
-				case JSObject(items)				=> items map { case (k,v) => unparse(JSString(k)) + ": " + unparse(v) } mkString ("{", ", ", "}")
+				case JSArray(items)					=> items map unparseExpr mkString ("[", ",", "]")
+				case JSObject(items)				=> items map { case (k,v) => (JSUtil stringLiteralDQ k) + ":" + unparseExpr(v) } mkString ("{", ",", "}")
 				
-				// arithmetic binary
+				// operators
 				
-				case JSAdd(left, right)				=> unparse(left) + "+" + unparse(right)
-				case JSSub(left, right)				=> unparse(left) + "-" + unparse(right)
-				case JSMul(left, right)				=> unparse(left) + "*" + unparse(right)
-				case JSDiv(left, right)				=> unparse(left) + "/" + unparse(right)
-				case JSMod(left, right)				=> unparse(left) + "%" + unparse(right)
-		
-				// arithmetic unary
-				
-				case JSNeg(sub)						=> "-" + unparse(sub)
-				case JSPos(sub)						=> "+" + unparse(sub)
-				
-				// comparison
-				
-				case JSEq(left, right)				=> unparse(left) + "=="		+ unparse(right)
-				case JSNe(left, right)				=> unparse(left) + "!="		+ unparse(right)
-				case JSEqEq(left, right)			=> unparse(left) + "==="	+ unparse(right)
-				case JSNeNe(left, right)			=> unparse(left) + "!=="	+ unparse(right)
-				case JSGt(left, right)				=> unparse(left) + ">"		+ unparse(right)
-				case JSLt(left, right)				=> unparse(left) + "<"		+ unparse(right)
-				case JSGe(left, right)				=> unparse(left) + ">="		+ unparse(right)
-				case JSLe(left, right)				=> unparse(left) + "<="		+ unparse(right)
-				
-				// logical
-				
-				case JSNot(sub)						=> "!" + unparse(sub)
-				case JSAnd(left, right)				=> unparse(left) + "&&"	+ unparse(right)
-				case JSOr(left, right)				=> unparse(left) + "||"	+ unparse(right)
-				
-				// bitwise
-				
-				case JSBitNot(sub)					=> "~" + unparse(sub)
-				case JSBitAnd(left, right)			=> unparse(left) + "&"		+ unparse(right)
-				case JSBitOr(left, right)			=> unparse(left) + "|"		+ unparse(right)
-				case JSBitXor(left, right)			=> unparse(left) + "^"		+ unparse(right)
-				case JSBitLeft(left, right)			=> unparse(left) + "<<"		+ unparse(right)
-				case JSBitRight(left, right)		=> unparse(left) + ">>"		+ unparse(right)
-				case JSBitRightFill(left, right)	=> unparse(left) + ">>>"	+ unparse(right)
+				case JSUnary(op, child)				=> unparseUnaryOp(op) + unparseExpr(child)
+				case JSBinary(op, left, right)		=> unparseExpr(left) + unparseBinaryOp(op) + unparseExpr(right)
 				
 				// access
 				
-				case JSField(name)					=> name
-				// TODO must wrap complex lvalues in parens
-				case JSDot(lvalue, field)			=> unparse(lvalue) + "." + unparse(field)
-				case JSBracket(lvalue, key)			=> unparse(lvalue) + "[" + unparse(key) + "]"
+				case JSField(id)					=> unparseId(id)
+				case JSSelect(lvalue, field)		=> unparseExpr(lvalue) + "." + unparseId(field)
+				case JSAccess(lvalue, key)			=> unparseExpr(lvalue) + "[" + unparseExpr(key) + "]"
 		
 				// function call
 				
-				case JSNew(call)					=> "new " + unparse(call)
-				case JSCall(function, arguments)	=> unparse(function) + (arguments map unparse mkString ("(", ", ", ")"))
+				case JSNew(call)					=> "new " + unparseExpr(call)
+				case JSCall(target, arguments)		=> unparseExpr(target) + (arguments map unparseExpr mkString ("(", ",", ")"))
 				
 				// special
 				
-				case JSParens(sub)					=> "(" + unparse(sub) + ")"
-				case JSComma(left, right)			=> unparse(left) + ","	+ unparse(right)
-				case JSIn(field, value)				=> unparse(field) + " in "	+ unparse(value)
-				case JSTernary(condition, yes, no)	=> unparse(condition) + "?"	+ unparse(yes) + ":" + unparse(no)
+				case JSParens(sub)					=> "(" + unparseExpr(sub) + ")"
+				case JSComma(left, right)			=> unparseExpr(left) + ","	+ unparseExpr(right)
+				case JSIn(field, value)				=> unparseExpr(field) + " in "	+ unparseExpr(value)
+				case JSTernary(condition, yes, no)	=> unparseExpr(condition) + "?"	+ unparseExpr(yes) + ":" + unparseExpr(no)
+			}
+			
+	def unparseId(id:JSId):String	= id.value
+			
+	def unparseUnaryOp(op:JSUnaryOp):String	=
+			op match {
+				case JSNegOp		=> "-"
+				case JSPosOp		=> "+"
+				
+				case JSNotOp		=> "!"
+				
+				case JSBitNotOp		=> "~"
+			}
+			
+	def unparseBinaryOp(op:JSBinaryOp):String	=
+			op match {
+				case JSAddOp			=> "+"
+				case JSSubOp			=> "-"
+				case JSMulOp			=> "*"
+				case JSDivOp			=> "/"
+				case JSModOp			=> "%"
+				
+				case JSEqOp				=> "=="
+				case JSNeOp				=> "!="
+				case JSEqEqOp			=> "==="
+				case JSNeNeOp			=> "!=="
+				case JSGtOp				=> ">"
+				case JSLtOp				=> "<"
+				case JSGeOp				=> ">="
+				case JSLeOp				=> "<="
+				
+				case JSAndOp			=> "&&"
+				case JSOrOp				=> "||"
+				
+				case JSBitAndOp			=> "&"
+				case JSBitOrOp			=> "|"
+				case JSBitXorOp			=> "^"
+				case JSBitLeftOp		=> "<<"
+				case JSBitRightOp		=> ">>"
+				case JSBitRightFillOp	=> ">>>"
 			}
 }
