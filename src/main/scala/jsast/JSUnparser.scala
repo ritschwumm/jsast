@@ -20,8 +20,9 @@ object JSUnparser {
 				
 				// operators
 				
-				case JSUnary(op, child)				=> unparseUnaryOp(op) + unparseExpr(child)
-				case JSBinary(op, left, right)		=> unparseExpr(left) + unparseBinaryOp(op) + unparseExpr(right)
+				case JSPrefix(op, child)			=> unparsePrefixOp(op) + unparseExpr(child)
+				case JSPostfix(op, child)			=> unparseExpr(child) + unparsePostfixOp(op)
+				case JSInfix(op, left, right)		=> unparseExpr(left) + unparseInfixOp(op) + unparseExpr(right)
 				
 				// access
 				
@@ -37,48 +38,72 @@ object JSUnparser {
 				// special
 				
 				case JSParens(sub)					=> "(" + unparseExpr(sub) + ")"
-				case JSComma(left, right)			=> unparseExpr(left) + ","	+ unparseExpr(right)
-				case JSIn(field, value)				=> unparseExpr(field) + " in "	+ unparseExpr(value)
+				case JSIn(field, value)				=> unparseId(field) + " in "	+ unparseExpr(value)
 				case JSTernary(condition, yes, no)	=> unparseExpr(condition) + "?"	+ unparseExpr(yes) + ":" + unparseExpr(no)
 			}
 			
 	def unparseId(id:JSId):String	= id.value
 			
-	def unparseUnaryOp(op:JSUnaryOp):String	=
+	def unparsePrefixOp(op:JSPrefixOp):String	=
 			op match {
+				case JSNotOp		=> "!"
+				
 				case JSNegOp		=> "-"
 				case JSPosOp		=> "+"
 				
-				case JSNotOp		=> "!"
-				
 				case JSBitNotOp		=> "~"
+				
+				case JSPreIncrOp	=> "++"
+				case JSPreDecrOp	=> "--"
 			}
 			
-	def unparseBinaryOp(op:JSBinaryOp):String	=
+	def unparsePostfixOp(op:JSPostfixOp):String	=
 			op match {
-				case JSAddOp			=> "+"
-				case JSSubOp			=> "-"
-				case JSMulOp			=> "*"
-				case JSDivOp			=> "/"
-				case JSModOp			=> "%"
+				case JSPostIncrOp	=> "++"
+				case JSPostDecrOp	=> "--"
+			}
+			
+	def unparseInfixOp(op:JSInfixOp):String	=
+			op match {
+				case JSAssignOp				=> "="
+				case JSCommaOp				=> ","
 				
-				case JSEqOp				=> "=="
-				case JSNeOp				=> "!="
-				case JSEqEqOp			=> "==="
-				case JSNeNeOp			=> "!=="
-				case JSGtOp				=> ">"
-				case JSLtOp				=> "<"
-				case JSGeOp				=> ">="
-				case JSLeOp				=> "<="
+				case JSAndOp				=> "&&"
+				case JSOrOp					=> "||"
 				
-				case JSAndOp			=> "&&"
-				case JSOrOp				=> "||"
+				case JSEqOp					=> "=="
+				case JSNeOp					=> "!="
+				case JSEqEqOp				=> "==="
+				case JSNeNeOp				=> "!=="
+				case JSGtOp					=> ">"
+				case JSLtOp					=> "<"
+				case JSGeOp					=> ">="
+				case JSLeOp					=> "<="
 				
-				case JSBitAndOp			=> "&"
-				case JSBitOrOp			=> "|"
-				case JSBitXorOp			=> "^"
-				case JSBitLeftOp		=> "<<"
-				case JSBitRightOp		=> ">>"
-				case JSBitRightFillOp	=> ">>>"
+				case JSAddOp				=> "+"
+				case JSSubOp				=> "-"
+				case JSMulOp				=> "*"
+				case JSDivOp				=> "/"
+				case JSModOp				=> "%"
+				
+				case JSBitAndOp				=> "&"
+				case JSBitOrOp				=> "|"
+				case JSBitXorOp				=> "^"
+				case JSBitLeftOp			=> "<<"
+				case JSBitRightOp			=> ">>"
+				case JSBitRightFillOp		=> ">>>"
+				
+				case JSAddAssignOp			=> "+="
+				case JSSubAssignOp			=> "-="
+				case JSMulAssignOp			=> "*="
+				case JSDivAssignOp			=> "/="
+				case JSModAssignOp			=> "%="
+				
+				case JSBitAndAssignOp		=> "&="
+				case JSBitOrAssignOp		=> "|="
+				case JSBitXorAssignOp		=> "^="
+				case JSBitLeftAssignOp		=> "<<="
+				case JSBitRightAssignOp		=> ">>="
+				case JSBitRightFillAssignOp	=> ">>>="
 			}
 }

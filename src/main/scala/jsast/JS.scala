@@ -31,8 +31,9 @@ case class JSObject(items:ISeq[(String,JSExpr)])	extends JSExpr
 
 // operators
 
-case class JSUnary(op:JSUnaryOp, child:JSExpr)					extends JSExpr
-case class JSBinary(op:JSBinaryOp, left:JSExpr, right:JSExpr)	extends JSExpr
+case class JSPrefix(op:JSPrefixOp, child:JSExpr)			extends JSExpr
+case class JSPostfix(op:JSPostfixOp, child:JSExpr)			extends JSExpr
+case class JSInfix(op:JSInfixOp, left:JSExpr, right:JSExpr)	extends JSExpr
 
 // access
 
@@ -47,10 +48,8 @@ case class JSCall(target:JSExpr, arguments:ISeq[JSExpr])	extends JSExpr
 
 // special
 
-case class JSParens(sub:JSExpr)					extends JSExpr
-case class JSComma(left:JSExpr, right:JSExpr)	extends JSExpr
-
-case class JSIn(field:JSField, value:JSExpr)					extends JSExpr
+case class JSParens(sub:JSExpr)									extends JSExpr
+case class JSIn(field:JSId, value:JSExpr)						extends JSExpr
 case class JSTernary(condition:JSExpr, yes:JSExpr, no:JSExpr)	extends JSExpr
 
 //------------------------------------------------------------------------------
@@ -69,69 +68,69 @@ object JSVarObject {
 //------------------------------------------------------------------------------
 //## operator enums
 
-sealed trait JSUnaryOp
-sealed trait JSBinaryOp
+sealed trait JSPrefixOp
+sealed trait JSPostfixOp
+sealed trait JSInfixOp
 
-// arithmetic binary
+// special
 
-case object JSAddOp	extends JSBinaryOp
-case object JSSubOp	extends JSBinaryOp
-case object JSMulOp	extends JSBinaryOp
-case object JSDivOp	extends JSBinaryOp
-case object JSModOp	extends JSBinaryOp
-
-// arithmetic unary
-
-case object JSNegOp	extends JSUnaryOp
-case object JSPosOp	extends JSUnaryOp
-
-// comparison
-
-case object JSEqOp		extends JSBinaryOp
-case object JSNeOp		extends JSBinaryOp
-case object JSEqEqOp	extends JSBinaryOp
-case object JSNeNeOp	extends JSBinaryOp
-case object JSGtOp		extends JSBinaryOp
-case object JSLtOp		extends JSBinaryOp
-case object JSGeOp		extends JSBinaryOp
-case object JSLeOp		extends JSBinaryOp
+case object JSAssignOp	extends JSInfixOp
+case object JSCommaOp	extends JSInfixOp
 
 // logical
 
-case object JSNotOp		extends JSUnaryOp
-case object JSAndOp		extends JSBinaryOp
-case object JSOrOp		extends JSBinaryOp
+case object JSNotOp		extends JSPrefixOp
+case object JSAndOp		extends JSInfixOp
+case object JSOrOp		extends JSInfixOp
+
+// comparison
+
+case object JSEqOp		extends JSInfixOp
+case object JSNeOp		extends JSInfixOp
+case object JSEqEqOp	extends JSInfixOp
+case object JSNeNeOp	extends JSInfixOp
+case object JSGtOp		extends JSInfixOp
+case object JSLtOp		extends JSInfixOp
+case object JSGeOp		extends JSInfixOp
+case object JSLeOp		extends JSInfixOp
+
+// arithmetic
+
+case object JSNegOp	extends JSPrefixOp
+case object JSPosOp	extends JSPrefixOp
+case object JSAddOp	extends JSInfixOp
+case object JSSubOp	extends JSInfixOp
+case object JSMulOp	extends JSInfixOp
+case object JSDivOp	extends JSInfixOp
+case object JSModOp	extends JSInfixOp
 
 // bitwise
+case object JSBitNotOp			extends JSPrefixOp
+case object JSBitAndOp			extends JSInfixOp
+case object JSBitOrOp			extends JSInfixOp
+case object JSBitXorOp			extends JSInfixOp
+case object JSBitLeftOp			extends JSInfixOp
+case object JSBitRightOp		extends JSInfixOp
+case object JSBitRightFillOp	extends JSInfixOp
 
-case object JSBitNotOp			extends JSUnaryOp
-case object JSBitAndOp			extends JSBinaryOp
-case object JSBitOrOp			extends JSBinaryOp
-case object JSBitXorOp			extends JSBinaryOp
-case object JSBitLeftOp			extends JSBinaryOp
-case object JSBitRightOp		extends JSBinaryOp
-case object JSBitRightFillOp	extends JSBinaryOp
+// assignment shortcut
 
-//------------------------------------------------------------------------------
+case object JSAddAssignOp	extends JSInfixOp
+case object JSSubAssignOp	extends JSInfixOp
+case object JSMulAssignOp	extends JSInfixOp
+case object JSDivAssignOp	extends JSInfixOp
+case object JSModAssignOp	extends JSInfixOp
 
-/*
-// pre/post increment/decrement
+case object JSBitAndAssignOp		extends JSInfixOp
+case object JSBitOrAssignOp			extends JSInfixOp
+case object JSBitXorAssignOp		extends JSInfixOp
+case object JSBitLeftAssignOp		extends JSInfixOp
+case object JSBitRightAssignOp		extends JSInfixOp
+case object JSBitRightFillAssignOp	extends JSInfixOp
 
-sealed trait JSInline extends JSOperator
+// sideeffecting
 
-case class JSPreIncr(variable:String)	extends JSPrefix
-case class JSPreDecr(variable:String)	extends JSPrefix
-case class JSPostIncr(variable:String)	extends JSSuffix
-case class JSPostDecr(variable:String)	extends JSSuffix
-
-// setter
-
-sealed trait JSSet	extends JSOperator
-
-case class JSAssign(variable:String, value:JSExpr)		extends JSSet
-case class JSAddAssign(variable:String, value:JSExpr)	extends JSSet
-case class JSSubAssign(variable:String, value:JSExpr)	extends JSSet
-case class JSMulAssign(variable:String, value:JSExpr)	extends JSSet
-case class JSDivAssign(variable:String, value:JSExpr)	extends JSSet
-case class JSModAssign(variable:String, value:JSExpr)	extends JSSet
-*/
+case object JSPreIncrOp		extends JSPrefixOp
+case object JSPreDecrOp		extends JSPrefixOp
+case object JSPostIncrOp	extends JSPostfixOp
+case object JSPostDecrOp	extends JSPostfixOp

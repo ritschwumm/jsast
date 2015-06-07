@@ -1,6 +1,6 @@
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.19.0"
+version			:= "0.20.0"
 
 scalaVersion	:= "2.11.6"
 scalacOptions	++= Seq(
