@@ -1,8 +1,8 @@
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.20.0"
+version			:= "0.21.0"
 
-scalaVersion	:= "2.11.6"
+scalaVersion	:= "2.11.7"
 scalacOptions	++= Seq(
 	"-deprecation",
 	"-unchecked",
