@@ -5,7 +5,7 @@ import scala.collection.immutable.{ Seq => ISeq }
 //------------------------------------------------------------------------------
 //## newtypes
 
-case class JSId(value:String)
+final case class JSId(value:String)
 
 //------------------------------------------------------------------------------
 //## plain js expressions
@@ -22,35 +22,35 @@ case object JSNull 		extends JSExpr
 case object JSThis 		extends JSExpr
 case object JSSuper		extends JSExpr
 
-case class JSBoolean(value:Boolean) 				extends JSExpr
-case class JSNumber(value:Double) 					extends JSExpr
-case class JSString(value:String)					extends JSExpr
-case class JSRegexp(pattern:String, options:String)	extends JSExpr
-case class JSArray(items:ISeq[JSExpr]) 				extends JSExpr
-case class JSObject(items:ISeq[(String,JSExpr)])	extends JSExpr
+final case class JSBoolean(value:Boolean) 					extends JSExpr
+final case class JSNumber(value:Double) 					extends JSExpr
+final case class JSString(value:String)						extends JSExpr
+final case class JSRegexp(pattern:String, options:String)	extends JSExpr
+final case class JSArray(items:ISeq[JSExpr]) 				extends JSExpr
+final case class JSObject(items:ISeq[(String,JSExpr)])		extends JSExpr
 
 // operators
 
-case class JSPrefix(op:JSPrefixOp, child:JSExpr)			extends JSExpr
-case class JSPostfix(op:JSPostfixOp, child:JSExpr)			extends JSExpr
-case class JSInfix(op:JSInfixOp, left:JSExpr, right:JSExpr)	extends JSExpr
+final case class JSPrefix(op:JSPrefixOp, child:JSExpr)				extends JSExpr
+final case class JSPostfix(op:JSPostfixOp, child:JSExpr)			extends JSExpr
+final case class JSInfix(op:JSInfixOp, left:JSExpr, right:JSExpr)	extends JSExpr
 
 // access
 
-case class JSField(id:JSId)						extends JSExpr
-case class JSSelect(lvalue:JSExpr, field:JSId)	extends JSExpr
-case class JSAccess(lvalue:JSExpr, key:JSExpr)	extends JSExpr
+final case class JSField(id:JSId)						extends JSExpr
+final case class JSSelect(lvalue:JSExpr, field:JSId)	extends JSExpr
+final case class JSAccess(lvalue:JSExpr, key:JSExpr)	extends JSExpr
 
 // function call
 		
-case class JSNew(call:JSCall)								extends JSExpr
-case class JSCall(target:JSExpr, arguments:ISeq[JSExpr])	extends JSExpr
+final case class JSNew(call:JSCall)								extends JSExpr
+final case class JSCall(target:JSExpr, arguments:ISeq[JSExpr])	extends JSExpr
 
 // special
 
-case class JSParens(sub:JSExpr)									extends JSExpr
-case class JSIn(field:JSId, value:JSExpr)						extends JSExpr
-case class JSTernary(condition:JSExpr, yes:JSExpr, no:JSExpr)	extends JSExpr
+final case class JSParens(sub:JSExpr)								extends JSExpr
+final case class JSIn(field:JSId, value:JSExpr)						extends JSExpr
+final case class JSTernary(condition:JSExpr, yes:JSExpr, no:JSExpr)	extends JSExpr
 
 //------------------------------------------------------------------------------
 //## varargs builder
