@@ -1,8 +1,8 @@
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.24.0"
+version			:= "0.25.0"
 
-scalaVersion	:= "2.11.8"
+scalaVersion	:= "2.12.0"
 scalacOptions	++= Seq(
 	"-deprecation",
 	"-unchecked",
@@ -15,7 +15,8 @@ scalacOptions	++= Seq(
 	// "-language:experimental.macros"
 	"-feature",
 	"-Ywarn-unused-import",
-	"-Xfatal-warnings"
+	"-Xfatal-warnings",
+	"-Xlint"
 )
 
 conflictManager	:= ConflictManager.strict
