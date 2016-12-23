@@ -1,8 +1,8 @@
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.25.0"
+version			:= "0.26.0"
 
-scalaVersion	:= "2.12.0"
+scalaVersion	:= "2.12.1"
 scalacOptions	++= Seq(
 	"-deprecation",
 	"-unchecked",
@@ -22,7 +22,7 @@ scalacOptions	++= Seq(
 conflictManager	:= ConflictManager.strict
 
 wartremoverErrors ++= Seq(
-	Wart.Any2StringAdd,
+	Wart.StringPlusAny,
 	Wart.EitherProjectionPartial,
 	Wart.OptionPartial,
 	Wart.Enumeration,
