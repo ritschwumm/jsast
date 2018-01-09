@@ -1,6 +1,6 @@
 package jsast
 
-object JSUtil {
+object JsUtil {
 	def quoteRegexp(s:String):String	=
 			s flatMap quoteRegexpChar
 		
@@ -22,10 +22,10 @@ object JSUtil {
 			}
 	
 	def stringLiteralDQ(s:String):String	=
-			s map { JSUtil stringChar (_, true, false) } mkString ("\"", "", "\"")
+			s map { JsUtil stringChar (_, true, false) } mkString ("\"", "", "\"")
 			
 	def stringLiteralSQ(s:String):String	=
-			s map { JSUtil stringChar (_, false, true) } mkString ("'", "", "'")
+			s map { JsUtil stringChar (_, false, true) } mkString ("'", "", "'")
 			
 	def stringChar(char:Char, doubleQuote:Boolean=true, singleQuote:Boolean=true):String	=
 			char match {
