@@ -1,8 +1,8 @@
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.30.0"
+version			:= "0.31.0"
 
-scalaVersion	:= "2.12.8"
+scalaVersion	:= "2.13.1"
 scalacOptions	++= Seq(
 	"-deprecation",
 	"-unchecked",
@@ -11,14 +11,13 @@ scalacOptions	++= Seq(
 	// "-language:higherKinds",
 	// "-language:reflectiveCalls",
 	// "-language:dynamics",
-	// "-language:postfixOps",
 	// "-language:experimental.macros"
 	"-feature",
 	"-Xfatal-warnings",
 	"-Xlint"
 )
 
-conflictManager	:= ConflictManager.strict
+conflictManager	:= ConflictManager.strict withOrganization "^(?!(org\\.scala-lang|org\\.scala-js)(\\..*)?)$"
 
 wartremoverErrors ++= Seq(
 	Wart.StringPlusAny,

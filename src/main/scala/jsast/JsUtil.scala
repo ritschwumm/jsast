@@ -3,7 +3,7 @@ package jsast
 object JsUtil {
 	def quoteRegexp(s:String):String	=
 			s flatMap quoteRegexpChar
-		
+
 	def quoteRegexpChar(char:Char):String	=
 			char match {
 				case	'(' | ')' |
@@ -20,13 +20,13 @@ object JsUtil {
 				case x if x < 32	=> "\\u%04x" format x.toInt
 				case x				=> x.toString
 			}
-	
+
 	def stringLiteralDQ(s:String):String	=
 			s map { JsUtil stringChar (_, true, false) } mkString ("\"", "", "\"")
-			
+
 	def stringLiteralSQ(s:String):String	=
 			s map { JsUtil stringChar (_, false, true) } mkString ("'", "", "'")
-			
+
 	def stringChar(char:Char, doubleQuote:Boolean=true, singleQuote:Boolean=true):String	=
 			char match {
 				case '"'	if doubleQuote	=> "\\\""

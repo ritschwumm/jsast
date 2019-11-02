@@ -55,7 +55,7 @@ final case class JsSelect(lvalue:JsExpr, field:JsId)	extends JsExpr
 final case class JsAccess(lvalue:JsExpr, key:JsExpr)	extends JsExpr
 
 // function call
-		
+
 final case class JsNew(call:JsCall)								extends JsExpr
 final case class JsCall(target:JsExpr, arguments:ISeq[JsExpr])	extends JsExpr
 
