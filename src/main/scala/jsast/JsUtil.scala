@@ -22,10 +22,10 @@ object JsUtil {
 			}
 
 	def stringLiteralDQ(s:String):String	=
-			s map { JsUtil stringChar (_, true, false) } mkString ("\"", "", "\"")
+			s .map { JsUtil.stringChar(_, true, false) } .mkString ("\"", "", "\"")
 
 	def stringLiteralSQ(s:String):String	=
-			s map { JsUtil stringChar (_, false, true) } mkString ("'", "", "'")
+			s .map { JsUtil.stringChar(_, false, true) } .mkString ("'", "", "'")
 
 	def stringChar(char:Char, doubleQuote:Boolean=true, singleQuote:Boolean=true):String	=
 			char match {

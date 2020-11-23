@@ -15,8 +15,8 @@ object JsUnparser {
 				case JsRegexp(pattern, options)		=> "/" + pattern + "/" + options
 				case JsBoolean(value)				=> if (value) "true" else "false"
 				case JsNumber(value)				=> value.toString
-				case JsArray(items)					=> items map unparseExpr mkString ("[", ",", "]")
-				case JsObject(items)				=> items map { case (k,v) => (JsUtil stringLiteralDQ k) + ":" + unparseExpr(v) } mkString ("{", ",", "}")
+				case JsArray(items)					=> items.map(unparseExpr).mkString("[", ",", "]")
+				case JsObject(items)				=> items.map { case (k,v) => (JsUtil stringLiteralDQ k) + ":" + unparseExpr(v) } .mkString("{", ",", "}")
 
 				// operators
 
@@ -33,7 +33,7 @@ object JsUnparser {
 				// function call
 
 				case JsNew(call)					=> "new " + unparseExpr(call)
-				case JsCall(target, arguments)		=> unparseExpr(target) + (arguments map unparseExpr mkString ("(", ",", ")"))
+				case JsCall(target, arguments)		=> unparseExpr(target) + arguments.map(unparseExpr).mkString ("(", ",", ")")
 
 				// special
 
