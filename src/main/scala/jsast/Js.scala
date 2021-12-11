@@ -1,7 +1,5 @@
 package jsast
 
-import scala.collection.immutable.{ Seq => ISeq }
-
 //------------------------------------------------------------------------------
 //## newtypes
 
@@ -30,17 +28,17 @@ final case class JsRegexp(pattern:String, options:String)	extends JsExpr
 object JsArray {
 	object Var {
 		def apply(it:JsExpr*):JsArray					= JsArray(it.toVector)
-		def unapplySeq(it:JsArray):Option[ISeq[JsExpr]]	= Some(it.items)
+		def unapplySeq(it:JsArray):Some[Seq[JsExpr]]	= Some(it.items)
 	}
 }
-final case class JsArray(items:ISeq[JsExpr]) 				extends JsExpr
+final case class JsArray(items:Seq[JsExpr]) 				extends JsExpr
 object JsObject {
 	object Var {
-		def apply(it:(String,JsExpr)*):JsObject						= JsObject(it.toVector)
-		def unapplySeq(it:JsObject):Option[ISeq[(String,JsExpr)]]	= Some(it.items)
+		def apply(it:(String,JsExpr)*):JsObject					= JsObject(it.toVector)
+		def unapplySeq(it:JsObject):Some[Seq[(String,JsExpr)]]	= Some(it.items)
 	}
 }
-final case class JsObject(items:ISeq[(String,JsExpr)])		extends JsExpr
+final case class JsObject(items:Seq[(String,JsExpr)])		extends JsExpr
 
 // operators
 
@@ -57,7 +55,7 @@ final case class JsAccess(lvalue:JsExpr, key:JsExpr)	extends JsExpr
 // function call
 
 final case class JsNew(call:JsCall)								extends JsExpr
-final case class JsCall(target:JsExpr, arguments:ISeq[JsExpr])	extends JsExpr
+final case class JsCall(target:JsExpr, arguments:Seq[JsExpr])	extends JsExpr
 
 // special
 

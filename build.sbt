@@ -1,14 +1,19 @@
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
+ThisBuild / versionScheme := Some("early-semver")
+
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.32.0"
+version			:= "0.33.0"
 
-scalaVersion	:= "2.13.3"
+scalaVersion	:= "2.13.7"
 scalacOptions	++= Seq(
 	"-feature",
 	"-deprecation",
 	"-unchecked",
 	"-Werror",
 	"-Xlint",
+	"-Xsource:3",
 )
 
 conflictManager	:= ConflictManager.strict withOrganization "^(?!(org\\.scala-lang|org\\.scala-js)(\\..*)?)$"
