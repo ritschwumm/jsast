@@ -4,16 +4,16 @@ ThisBuild / versionScheme := Some("early-semver")
 
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.33.0"
+version			:= "0.34.0"
 
-scalaVersion	:= "2.13.7"
+scalaVersion	:= "3.1.0"
 scalacOptions	++= Seq(
 	"-feature",
 	"-deprecation",
 	"-unchecked",
-	"-Werror",
-	"-Xlint",
-	"-Xsource:3",
+	"-Wunused:all",
+	"-Xfatal-warnings",
+	"-Ykind-projector:underscores",
 )
 
 conflictManager	:= ConflictManager.strict withOrganization "^(?!(org\\.scala-lang|org\\.scala-js)(\\..*)?)$"
