@@ -4,9 +4,9 @@ ThisBuild / versionScheme := Some("early-semver")
 
 name			:= "jsast"
 organization	:= "de.djini"
-version			:= "0.35.0"
+version			:= "0.36.0"
 
-scalaVersion	:= "3.1.2"
+scalaVersion	:= "3.1.3"
 scalacOptions	++= Seq(
 	"-feature",
 	"-deprecation",
